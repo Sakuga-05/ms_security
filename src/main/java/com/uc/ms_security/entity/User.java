@@ -38,4 +38,12 @@ public class User {
             nullable = false
     )
     private String password;
+
+    @OneToOne( //Tengo pegado un perfil a este usuario, es una relación 1 a 1
+            mappedBy = "user", //Referencia a la variable que está en la otra clase (Profile)
+            cascade = CascadeType.ALL, //Si se borra el usuario, se borra el perfil
+            orphanRemoval = true,
+            fetch = FetchType.LAZY 
+    )
+    private Profile profile;
 }

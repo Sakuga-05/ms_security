@@ -1,7 +1,10 @@
 package com.uc.ms_security.repository;
 
 import com.uc.ms_security.entity.User;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
 
 //UserRepository hereda de JpaRepository algunas funciones y procedimientos:
 //save(), findAll(), findById(), delete(), existsById()
@@ -15,4 +18,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     //Verifica si existe otro usuario con el mismo email, excluyendo al usuario con el ID proporcionado.
     boolean existsByEmailAndIdNot(String email, Long id);
+    
+    
+    @EntityGraph(attributePaths = {"profile"})
+    Optional<User> findWithProfileById(Long id);
 }

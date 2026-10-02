@@ -2,6 +2,7 @@ package com.uc.ms_security.service;
 
 import com.uc.ms_security.dto.user.CreateUserDTO;
 import com.uc.ms_security.dto.user.UpdateUserDTO;
+import com.uc.ms_security.dto.user.UserDetailResponseDTO;
 import com.uc.ms_security.dto.user.UserResponseDTO;
 import com.uc.ms_security.entity.User;
 import com.uc.ms_security.exception.ApplicationException;
@@ -56,9 +57,14 @@ public class UserService {
     }
 
     //BUSCA UN OBJETO TIPO "User" Y LO TRANSFORMA A TIPO "UserResponseDTO"
-    public UserResponseDTO findById(Long id) {
-        User user = findUser(id);
-        return userMapper.toResponseDTO(user);
+    public UserDetailResponseDTO findByIdAndProfile(Long id) {
+        User user = userRepository.findWithProfileById(id)
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorCase.NOT_FOUND,
+                        "Usuario no encontrado con id: " + id
+                ));
+
+        return userMapper.toDetailResponseDTO(user);
     }
 
     //ACTUALIZAR USUARIO

@@ -23,4 +23,12 @@ public class Profile {
 
     @Column(nullable = false)
     private LocalDate birthDate;
+
+    @OneToOne(fetch = FetchType.LAZY) //Relación 1 a 1
+    @JoinColumn( //Join: Juntar una tabla con otra tabla
+            name = "user_id", //Definición de la foranea
+            nullable = false,
+            unique = true
+    )
+    private User user;
 }

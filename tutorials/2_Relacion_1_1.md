@@ -41,7 +41,7 @@ profiles
 id
 phone
 birth_date
-user_id  ← UNIQUE FK
+user_id  ← UNIQUE FK (El UNIQUE es para cumplir la reación 1 a 1)
 ```
 
 El requisito principal será:
@@ -996,7 +996,7 @@ LAZY
 y cargar explícitamente el perfil cuando realmente lo necesitamos.
 
 ---
-
+//Va leugo de UserRepository
 # 20. Modificar el Service para consultar usuario
 
 Anteriormente teníamos:
@@ -1107,7 +1107,7 @@ puede seguir devolviendo:
 ```
 
 ---
-
+//MIRAR BIEN EST CASO
 # 22. Crear `ProfileService`
 
 Ahora necesitamos poder crear el perfil para un usuario.
@@ -1141,6 +1141,7 @@ public class ProfileService {
     private final UserRepository userRepository;
     private final ProfileMapper profileMapper;
 
+    //CREA PERFIL PARA UN USUARIO
     public ProfileResponseDTO create(Long userId, ProfileRequestDTO dto) {
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new ApplicationException(
@@ -1162,6 +1163,7 @@ public class ProfileService {
         return profileMapper.toResponseDTO(savedProfile);
     }
 
+    //ACTUALIZAR PERFIL SEGUN UN USUARIO
     public ProfileResponseDTO update(Long userId, ProfileRequestDTO dto) {
         Profile profile = findProfile(userId);
 
@@ -1171,14 +1173,17 @@ public class ProfileService {
         return profileMapper.toResponseDTO(updatedProfile);
     }
 
+    //RETORNA UN OBJETO TIPO "profile" Y LO CONVIERTE A "ProfileResponseDTO"
     public ProfileResponseDTO findByUserId(Long userId) {
         return profileMapper.toResponseDTO(findProfile(userId));
     }
 
+    // ELIMINA PERFIL SEGUN UN USUARIO
     public void delete(Long userId) {
         profileRepository.delete(findProfile(userId));
     }
 
+    //BUSCAR PERFIL POR ID DE USUARIO
     private Profile findProfile(Long userId) {
         return profileRepository.findByUserId(userId)
             .orElseThrow(() -> new ApplicationException(

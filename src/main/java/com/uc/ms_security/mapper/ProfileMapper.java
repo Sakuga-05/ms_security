@@ -29,16 +29,15 @@ public class ProfileMapper {
     }
 
     public ProfileResponseDTO toResponseDTO(Profile profile) {
+        //Retorno temprano (No se recomienda hacerlo)
+        if (profile == null) { //Cómo el usuario es recien creado, no tiene perfil, entonces si es null, retorno null
+            return null;
+        }
+
         return new ProfileResponseDTO(
                 profile.getId(),
                 profile.getPhone(),
                 profile.getBirthDate()
         );
-    }
-
-    public List<ProfileResponseDTO> toResponseDTOList(List<Profile> profiles) {
-        return profiles.stream()
-                .map(this::toResponseDTO)
-                .toList();
     }
 }
