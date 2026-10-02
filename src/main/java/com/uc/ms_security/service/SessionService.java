@@ -4,12 +4,12 @@ import com.uc.ms_security.dto.session.CreateSessionDTO;
 import com.uc.ms_security.dto.session.SessionResponseDTO;
 import com.uc.ms_security.dto.session.UpdateSessionDTO;
 import com.uc.ms_security.entity.Session;
+import com.uc.ms_security.exception.ApplicationException;
+import com.uc.ms_security.exception.ErrorCase;
 import com.uc.ms_security.mapper.SessionMapper;
 import com.uc.ms_security.repository.SessionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -23,7 +23,7 @@ public class SessionService {
     //CREAR SESSION
     public SessionResponseDTO create(CreateSessionDTO dto) {
         if (sessionRepository.existsByToken(dto.getToken())) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "Ya existe una sesión con este token");
+            throw new ApplicationException(ErrorCase.ALREADY_EXISTS, "Ya existe una sesión con este token");
         }
         Session session = sessionMapper.toEntity(dto);
         Session saveSession = sessionRepository.save(session);
@@ -38,7 +38,10 @@ public class SessionService {
     //BUSCA UN SESSION DADO UN ID
     private Session findSession(Long id) {
         return sessionRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Sesión no encontrada"));
+                .orElseThrow(() -> new ApplicationException(
+                        ErrorCase.NOT_FOUND,
+                        "Sesión no encontrada con id: " + id
+                ));
     }
 
     //CONVIERTE UN DATO TIPO "Session" A TIPO "SessionResponseDTO"
@@ -51,7 +54,10 @@ public class SessionService {
         Session session = findSession(id);
 
         if (sessionRepository.existsByTokenAndIdNot(dto.getToken(), id)) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "El token pertenece a otra sesión");
+            throw new ApplicationException(
+                    ErrorCase.ALREADY_EXISTS,
+                    "El token pertenece a otra sesión"
+            );
         }
         sessionMapper.updateEntity(dto, session);
         return sessionMapper.toResponseDTO(sessionRepository.save(session));
