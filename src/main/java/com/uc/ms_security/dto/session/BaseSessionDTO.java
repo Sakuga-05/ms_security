@@ -4,7 +4,7 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -15,6 +15,6 @@ public abstract class BaseSessionDTO {
     private String token;
 
     @NotNull(message = "La fecha de expiración es obligatoria")
-    @Future(message = "La fecha de expiración debe ser superior a hoy")
-    private LocalDate expiration;
+    @Future(message = "La fecha de expiración debe estar en el futuro")
+    private LocalDateTime expiration;
 }

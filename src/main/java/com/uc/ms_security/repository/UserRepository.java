@@ -18,8 +18,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     //Verifica si existe otro usuario con el mismo email, excluyendo al usuario con el ID proporcionado.
     boolean existsByEmailAndIdNot(String email, Long id);
-    
-    
+
     @EntityGraph(attributePaths = {"profile"})
     Optional<User> findWithProfileById(Long id);
+
+    //Carga el JOIN de la relación entre User y Session para evitar el problema de N+1 consultas
+    @EntityGraph(attributePaths = {"sessions"}) 
+    Optional<User> findWithSessionsById(Long id);
 }

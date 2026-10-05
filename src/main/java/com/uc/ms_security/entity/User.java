@@ -1,9 +1,11 @@
 package com.uc.ms_security.entity;
 
-import jakarta.persistence.*; //
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor; //Lombok crea cosas solo en tiempo de ejecución.
 import lombok.Setter;
+import java.util.List;
+import java.util.ArrayList;
 
 //los @ se llaman decoradores.
 //Si quiero que sea una base de datos no relacional el @Table se reemplaza por @Document
@@ -46,4 +48,12 @@ public class User {
             fetch = FetchType.LAZY 
     )
     private Profile profile;
+
+    @OneToMany(
+            mappedBy = "user",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true,
+            fetch = FetchType.LAZY
+    )
+    private List<Session> sessions = new ArrayList<>();
 }

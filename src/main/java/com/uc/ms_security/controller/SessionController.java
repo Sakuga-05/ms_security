@@ -1,8 +1,8 @@
 package com.uc.ms_security.controller;
 
 import com.uc.ms_security.dto.session.CreateSessionDTO;
-import com.uc.ms_security.dto.session.SessionResponseDTO;
 import com.uc.ms_security.dto.session.UpdateSessionDTO;
+import com.uc.ms_security.dto.session.SessionResponseDTO;
 import com.uc.ms_security.service.SessionService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/sessions")
+@RequestMapping("/api/users/{userId}/sessions")
 @RequiredArgsConstructor
 public class SessionController {
 
@@ -20,28 +20,37 @@ public class SessionController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public SessionResponseDTO create(@Valid @RequestBody CreateSessionDTO dto) {
-        return sessionService.create(dto);
+    public SessionResponseDTO create(
+            @PathVariable Long userId,
+            @Valid @RequestBody CreateSessionDTO dto) {
+        return sessionService.create(userId, dto);
     }
 
     @GetMapping
-    public List<SessionResponseDTO> findAll() {
-        return sessionService.findAll();
+    public List<SessionResponseDTO> findAll(@PathVariable Long userId) {
+        return sessionService.findAllByUserId(userId);
     }
 
-    @GetMapping("/{id}")
-    public SessionResponseDTO findById(@PathVariable Long id) {
-        return sessionService.findById(id);
+    @GetMapping("/{sessionId}")
+    public SessionResponseDTO findById(
+            @PathVariable Long userId,
+            @PathVariable Long sessionId) {
+        return sessionService.findById(userId, sessionId);
     }
 
-    @PutMapping("/{id}")
-    public SessionResponseDTO update(@PathVariable Long id, @Valid @RequestBody UpdateSessionDTO dto) {
-        return sessionService.update(id, dto);
+    @PutMapping("/{sessionId}")
+    public SessionResponseDTO update(
+            @PathVariable Long userId,
+            @PathVariable Long sessionId,
+            @Valid @RequestBody UpdateSessionDTO dto) {
+        return sessionService.update(userId, sessionId, dto);
     }
 
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{sessionId}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-        sessionService.delete(id);
+    public void delete(
+            @PathVariable Long userId,
+            @PathVariable Long sessionId) {
+        sessionService.delete(userId, sessionId);
     }
 }

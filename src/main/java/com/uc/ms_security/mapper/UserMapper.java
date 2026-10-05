@@ -4,6 +4,7 @@ import com.uc.ms_security.dto.user.CreateUserDTO;
 import com.uc.ms_security.dto.user.UpdateUserDTO;
 import com.uc.ms_security.dto.user.UserDetailResponseDTO;
 import com.uc.ms_security.dto.user.UserResponseDTO;
+import com.uc.ms_security.dto.user.UserSessionsResponseDTO;
 import com.uc.ms_security.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,9 +18,10 @@ public class UserMapper {
     //Inyección de dependencia de ProfileMapper para poder usarlo en este mapper
     //UsserMapper necesita ProfileMapper para poder mapear el perfil del usuario a DTO
     private final ProfileMapper profileMapper;
-    
-    //DEL FRONT AL BACK
-    //De DTO a entidad
+    private final SessionMapper sessionMapper;
+
+    //DEL BACK AL FRONT
+    // De entidad a DTO
     public User toEntity(CreateUserDTO dto) {
         User user = new User();
 
@@ -29,7 +31,6 @@ public class UserMapper {
 
         return user;
     }
-
 
     public void updateEntity(UpdateUserDTO dto, User user) {
         user.setName(dto.getName());
@@ -55,7 +56,16 @@ public class UserMapper {
                 user.getId(),
                 user.getName(),
                 user.getEmail(),
-                profileMapper.toResponseDTO(user.getProfile()) //Aquí ocurre el JOIN, porque el usuario tiene un perfil, entonces se trae el perfil del usuario y se convierte a DTO
+                profileMapper.toResponseDTO(user.getProfile())
+        );
+    }
+
+    public UserSessionsResponseDTO toSessionsResponseDTO(User user) {
+        return new UserSessionsResponseDTO(
+                user.getId(),
+                user.getName(),
+                user.getEmail(),
+                sessionMapper.toResponseDTOList(user.getSessions())
         );
     }
 
