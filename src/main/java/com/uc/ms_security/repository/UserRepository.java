@@ -25,4 +25,9 @@ public interface UserRepository extends JpaRepository<User, Long> {
     //Carga el JOIN de la relación entre User y Session para evitar el problema de N+1 consultas
     @EntityGraph(attributePaths = {"sessions"}) 
     Optional<User> findWithSessionsById(Long id);
+
+    //Se esta haciendo un JOIN de tres tablas, con user, userRole y desde userRole ingreso a role.
+    //Esto es para que cuando busque un usuario, me traiga todos sus roles asociados
+    @EntityGraph(attributePaths = {"userRoles", "userRoles.role"})
+    Optional<User> findWithRolesById(Long id);
 }
