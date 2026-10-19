@@ -13,6 +13,7 @@ import com.uc.ms_security.mapper.UserMapper;
 import com.uc.ms_security.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,18 +28,28 @@ public class UserService {
 
     private final UserMapper userMapper;
 
+    private final PasswordEncoder passwordEncoder;
+
     //CREAR USUARIO
-    public UserResponseDTO create(CreateUserDTO dto) { //Si existe algun dato que no cumple las reglas del dto, no entra ni al metodo
-        //Esta excepción (validación) deberia ir en el controlador
-        //Antes dependia de un httpStatus, ahora depende de un errorCase (enum) que es más fácil de manejar y entender
-        if (userRepository.existsByEmail(dto.getEmail())) { //Valida a nivel de fichas (con atributos sueltos, antes de armar el muñeco)
+    public UserResponseDTO create(CreateUserDTO dto) {
+        if (userRepository.existsByEmail(dto.getEmail())) {
             throw new ApplicationException(
                     ErrorCase.ALREADY_EXISTS,
-                    "Ya existe un usuario con este email"
+                    "El correo ya está registrado"
             );
         }
-        User user = userMapper.toEntity(dto); //Objeto que no tiene id asignado
-        User savedUser = userRepository.save(user); //Se guarda el objeto y se le asigna un id
+
+        String encodedPassword = passwordEncoder.encode(
+                dto.getPassword()
+        );
+
+        User user = userMapper.toEntity(
+                dto,
+                encodedPassword
+        );
+
+        User savedUser = userRepository.save(user);
+
         return userMapper.toResponseDTO(savedUser);
     }
 
@@ -102,6 +113,11 @@ public class UserService {
         }
         //No necesito guardarlo en una variable ya que en updateEntity se actualiza por referencia
         userMapper.updateEntity(dto, user);
+
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
+
         User updatedUser = userRepository.save(user);
         return userMapper.toResponseDTO(updatedUser);
     }

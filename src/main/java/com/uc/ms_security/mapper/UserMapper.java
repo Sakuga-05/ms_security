@@ -24,21 +24,22 @@ public class UserMapper {
 
     //DEL BACK AL FRONT
     // De entidad a DTO
-    public User toEntity(CreateUserDTO dto) {
+    public User toEntity(CreateUserDTO dto,String encodedPassword) {
         User user = new User();
-
+        
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
-        user.setPassword(dto.getPassword());
+        user.setPassword(encodedPassword);
 
         return user;
     }
+
 
     public void updateEntity(UpdateUserDTO dto, User user) {
         user.setName(dto.getName());
         user.setEmail(dto.getEmail());
 
-        if (dto.getPassword() != null) {
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
             user.setPassword(dto.getPassword());
         }
     }
