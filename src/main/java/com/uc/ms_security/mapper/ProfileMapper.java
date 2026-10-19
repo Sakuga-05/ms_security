@@ -6,8 +6,6 @@ import com.uc.ms_security.dto.profile.UpdateProfileDTO;
 import com.uc.ms_security.entity.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 @Component
 public class ProfileMapper {
 
