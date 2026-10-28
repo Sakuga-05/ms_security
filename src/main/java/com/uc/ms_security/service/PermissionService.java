@@ -75,4 +75,30 @@ public class PermissionService {
                         "Permiso no encontrado"
                 ));
     }
+
+    // Comprueba el permiso vigente del usuario para esta petición.
+    public boolean hasPermission(
+            Long userId,
+            String httpMethod,
+            String requestUrl
+    ) {
+        String normalizedUrl = normalizeUrl(requestUrl);
+
+        return permissionRepository.findByUserIdAndMethodAndUrl(
+                userId,
+                httpMethod.toUpperCase(),
+                normalizedUrl
+        )
+        .stream()
+        .findAny()
+        .isPresent();
+    }
+
+    // Convierte segmentos numéricos y Mongo ObjectId al patrón {id}.
+    private String normalizeUrl(String requestUrl) {
+        return requestUrl.replaceAll(
+                "(?i)(?<=/)(?:\\d+|[a-f0-9]{24})(?=/|$)",
+                "{id}"
+        );
+    }
 }

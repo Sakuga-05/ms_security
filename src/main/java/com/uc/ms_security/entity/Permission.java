@@ -9,7 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "permissions")
+@Table(
+        name = "permissions",
+        // Impide registrar dos permisos iguales para la misma ruta y método.
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uk_permission_url_method",
+                        columnNames = {"url", "method"}
+                )
+        }
+)
 @Getter
 @Setter
 @NoArgsConstructor
