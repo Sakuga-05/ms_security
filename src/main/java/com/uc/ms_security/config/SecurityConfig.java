@@ -31,6 +31,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/login").permitAll()
+                        .requestMatchers("/api/auth/register").permitAll()
                         // Las demas rutas requieren un permiso vigente en la base de datos.
                         .anyRequest().access(dynamicAuthorizationManager)
                 )
